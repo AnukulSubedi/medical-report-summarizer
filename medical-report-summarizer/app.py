@@ -76,6 +76,25 @@ def ocr_image():
         traceback.print_exc()  # ✅ Prints full error trace
         return jsonify({'error': str(e)}), 500
 
+#----
+# Chat route
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.get_json()
+    message = data.get("message")
+    context = data.get("context")  # the summary from previous step
+
+    if not message or not context:
+        return jsonify({'error': 'Missing message or context'}), 400
+
+    prompt = f"You are a helpful medical assistant. The user was shown this summary:\n\n{context}\n\nNow they asked: {message}\n\nReply accordingly."
+
+    try:
+        reply = model_inference(prompt)
+        return jsonify({'response': reply})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 # ---------------------------------------------
 # Download route
 @app.route('/download/<filename>', methods=['GET'])

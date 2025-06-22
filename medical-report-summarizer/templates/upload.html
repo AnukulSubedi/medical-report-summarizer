@@ -35,8 +35,15 @@
   <a id="download-link" href="#" style="display:none;" download>
   <button type="button">📥 Download Full Result (PDF)</button>
   </a>
+ 
+  <h3>Ask a follow-up question:</h3>
+<textarea id="chat_input" placeholder="e.g. What does this result mean?" style="width:100%;"></textarea>
+<br>
+<button onclick="sendChat()">💬 Ask</button>
 
-  <script>
+<div id="chat_history" style="margin-top: 1rem; border-top: 1px solid #ccc; padding-top: 1rem;"></div>
+
+<script>
   const form = document.getElementById('upload-form');
   const extracted = document.getElementById('extracted_text');
   const analysis = document.getElementById('analysis');
@@ -62,6 +69,31 @@
     } else {
       downloadLink.style.display = 'none';
     }
+
+    document.getElementById("chat_history").innerHTML = ''; // Reset chat on new upload
+  }
+
+  async function sendChat() {
+    const message = document.getElementById('chat_input').value;
+    const context = document.getElementById('analysis').value;
+    const chatBox = document.getElementById('chat_history');
+
+    const response = await fetch('/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, context })
+    });
+
+    const result = await response.json();
+
+    if (result.response) {
+      chatBox.innerHTML += `<div><b>You:</b> ${message}</div>`;
+      chatBox.innerHTML += `<div><b>AI:</b> ${result.response}</div><hr>`;
+    } else {
+      chatBox.innerHTML += `<div style="color:red;">Error: ${result.error}</div>`;
+    }
+
+    document.getElementById('chat_input').value = '';
   }
 </script>
 </body>
