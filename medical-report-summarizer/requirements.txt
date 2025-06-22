@@ -5,3 +5,4 @@ pillow
 pdf2image
 openai
 python-dotenv
+fpdf
