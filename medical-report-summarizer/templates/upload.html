@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Medical Report Summarizer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f8f8f8;
+    }
+    h2 {
+      color: #333;
+    }
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h2>Upload Medical Report (Image or PDF)</h2>
+  <form id="upload-form" enctype="multipart/form-data">
+    <input type="file" name="file" required>
+    <button type="submit">Submit</button>
+  </form>
+
+  <h3>Extracted Text:</h3>
+  <textarea id="extracted_text" readonly></textarea>
+
+  <h3>LLM Analysis:</h3>
+  <textarea id="analysis" readonly></textarea>
+
+  <script>
+    const form = document.getElementById('upload-form');
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+
+      const response = await fetch('/uploads', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      document.getElementById('extracted_text').value = result.extracted_text || "Error extracting text.";
+      document.getElementById('analysis').value = result.analysis || "Error generating analysis.";
+    }
+  </script>
+</body>
+</html>

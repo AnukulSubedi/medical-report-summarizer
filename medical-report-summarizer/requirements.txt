@@ -1,0 +1,7 @@
+flask
+flask-cors
+pytesseract
+pillow
+pdf2image
+openai
+python-dotenv
